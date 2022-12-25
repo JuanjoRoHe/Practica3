@@ -1,0 +1,175 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\ProvidesPackage{whilecode2}
+  [04/01/2018 v1.0 - Package for writing programs in WHILE]
+
+\RequirePackage{listings}
+\RequirePackage{suffix}
+\RequirePackage[onelanguage, linesnumbered, noline, resetcount]{algorithm2e}
+
+\LinesNotNumbered
+
+\DeclareOption{linesnumbered}{
+  \LinesNumbered
+}
+\ProcessOptions\relax
+
+% 1. Variables
+\newcommand{\Var}[1]{#1}
+
+% 2. Assignments
+\newcommand{\Zero}[1]{#1 \Assig 0\;}						% Assign 0 to #1
+\WithSuffix\newcommand\Zero*[1]{#1 \Assig 0}				% Assign 0 to #1 (no line break)
+
+\newcommand{\Copy}[2]{#1 \Assig #2\;}						% Assign #2 to #1
+\WithSuffix\newcommand\Copy*[2]{#1 \Assig #2}				% Assign #2 to #1 (no line break)
+
+\newcommand{\Incr}[2]{#1 \Assig #1 $ + \ $#2\;}				% Add #2 to #1
+\WithSuffix\newcommand\Incr*[2]{#1 \Assig #1 $ + \ $#2}	% Add #2 to #1 (no line break)
+
+\newcommand{\Decr}[2]{#1 \Assig #1 $ - \ $#2\;}				% Subtract #2 from #1
+\WithSuffix\newcommand\Decr*[2]{#1 \Assig #1 $ - \ $#2}	% Subtract #2 from #1 (no line break)
+
+% 3. Control structures (AW -> Augmented while)
+\SetKwProg{While}{while}{ do}{od}
+\SetKwProg{DoTimesAW}{do}{ times}{od}			
+
+\newcommand{\IfAW}[2]{\If{#1}{#2}}
+\newcommand{\IfElseAW}[3]{\uIf{#1}{#2}\Else{#3}}
+
+% 4. Commentaries and blank lines
+\newcommand{\WhileBlankLine}{\DontPrintSemicolon\;\PrintSemicolon}
+\SetKwComment{CommentInlineKW}{(*}{*)\WhileBlankLine}
+\newcommand{\CommentInline}[1]{\CommentInlineKW*[f]{#1}}
+\SetKwComment{HeaderComment}{}{}
+\newcommand{\Comment}[1]{\texttt{(*#1*)}\\}
+
+% 5. While code environment
+\newenvironment{whilecode}
+    {\begin{algorithm}
+    }
+    { 
+    \end{algorithm}
+    }
+    
+% 6. While program command
+\newcommand{\whileprogram}[4]{\begin{whilecode}[h]
+\Indm
+\HeaderComment{\textnormal{#1 = $(#2$, #4)}}
+\HeaderComment{\ }
+\HeaderComment{\textnormal{#4:}}
+\Indp
+#3
+\end{whilecode}}
+
+\WithSuffix\newcommand\whileprogram*[4]{{\LinesNumberedHidden\begin{whilecode}[h]
+\Indm
+\HeaderComment{\textnormal{#1 = $(#2$, #4)}}
+\HeaderComment{\ }
+\HeaderComment{\textnormal{#4:}}
+\Indp
+#3
+\end{whilecode}}}
+
+% 7. Input, Output
+\SetKwInput{Input}{Input}
+\SetKwInput{Return}{Output}
+
+% 8. Others
+\newcommand{\Assig}{$ := \ $}
+\newcommand{\SetCodeStyle}{\RestyleAlgo}	% plain (default option), ruled, tworuled, boxed
+
+% 9. DEPRECATED COMMANDS
+\newcommand{\Asig}{\Assig}
+\newcommand{\DefaultVar}[1]{$X_#1$}
+\newcommand{\Inc}[1]{#1 $ + \ 1$}
+\newcommand{\Dec}[1]{#1 $ - \ 1$}
+\SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{fi}
+\SetKwProg{WhileSC}{while}{ do}{od\;}
+\SetKwProg{DoTimes}{do}{ times}{od}
+\SetKwProg{DoTimesSC}{do}{ times}{od\;}
+
+\PackageWarning{\Asig}{'\Asig' is deprecated. You should use '\Assig'}
+
+\usepackage{amssymb} %Necesario para el "No existe"
+\usepackage{amsthm, amsmath}
+% Personalizo mi alfabeto para añadir la N de nº naturales
+\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+\newcommand{\Lb}{\pazocal{L}}
+
+\usepackage{graphicx}
+    \title{\textbf{Práctica nº3}}
+    \author{Juan José Rodríguez Hernández}
+    \date{25/12/2022}
+    
+    \addtolength{\topmargin}{-2cm}
+    \addtolength{\textheight}{2cm}
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{Define The TM solution of exercise 3.4 of the problem list and test its correct behaviour\\} 
+
+
+ The Turing Machine is the next one:\\
+\includegraphics[scale=0.55]{TuringMachine.jpg}
+We see that if we introduce the next chains:\\\\
+$ ||*||| $ has the result: $||||$\\
+\includegraphics[scale=0.75]{1.jpg}\\\\
+$|||*||||$ has the result: $||||||$\\
+\includegraphics[scale=0.75]{2.jpg}
+
+
+\section{Define a recursive function for the sum of 3 values}
+
+When we apply recursivity to a primitive function, we have to define a function for the base chase $g$ and a function for the recursive chase  $f$. They are going to have as parameters in which step we are $m - 1$, who is the result (previously calculated) of that step $h(n, m - 1)$ and their parameters $n$. It should return the value of the function in $m$ step. \\\\
+
+Be $k \geq 0$ and functions: \\
+$g: \mathbb{N}^k \to \mathbb{N} $ \\
+$h:\mathbb{N}^{k+2} \to \mathbb{N}$ \\
+If $f:\mathbb{N}^{k+1} \to \mathbb{N}$ is \\
+\begin{center}
+    $f(n,m)=\left\{ 
+\begin{array}{lcc}
+    g(n)                          & \text{if} & m=0\\
+    h(n,m-1,f(n,m-1)) & \text{if} & m>0 
+\end{array}\right.$
+\end{center}
+then $f$ comes from $g$ and $h$ by primitive recursion.\\\\
+Now we create \textit{$sum_3$} as a recursive function:\\
+$g: \mathbb{N}^2 \to \mathbb{N} $ \\
+$h:\mathbb{N}^{2+2} \to \mathbb{N}$ \\
+$sum_3:\mathbb{N}^{2+1} \to \mathbb{N}$ \\
+Then we have:\\
+$g: \mathbb{N}^2 \to \mathbb{N} $ \\
+$h:\mathbb{N}^{4} \to \mathbb{N}$ \\
+ $sum_3:\mathbb{N}^3 \to \mathbb{N}$ \\\\
+We take $g \equiv sum(x, y)$\\
+And we take $h \equiv \sigma (\pi^4_4)$\\\\
+We see that $sum$ is another recursive function. As we have seen in class:\\
+$sum(n) = \langle \pi^1_1 | \sigma (\pi^3_3) \rangle (n)$\\\\
+Our final function \textit{$sum_3$} is:\\
+$sum_3(n) = \langle \langle \pi_1^1 |  \sigma(\pi_3^3) \rangle | \sigma(\pi_4^4) \rangle (n) $\\\\\\
+Lets test how it operates using \textit{Octave}:\\
+\includegraphics[scale=0.75]{Octave.png}
+\\
+\section{Implement a WHILE programm that computes the sum of 3 values. You must use an auxiliary variable that accumulates the result of the sum}
+[$Sum_3$]\\
+\begin{whilecode}[H]
+ \While{$X_2$ $!= 0$}{
+  $X_1 \Assig X_1 + 1$\;
+  $X_2 \Assig X_2 - 1$\;
+ }
+  \While{$X_3$ $!= 0$}{
+  $X_1 \Assig X_1 + 1$\;
+  $X_3 \Assig X_3 - 1$\;
+ }
+\end{whilecode}
+
+
+\end{document}
+
